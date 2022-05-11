@@ -301,7 +301,22 @@ export default class MoviesDAO {
           $match: {
             _id: ObjectId(id)
           }
-        }
+        },
+        {
+          $lookup: {
+            from: "comments",
+            localField: "_id",
+            foreignField: "movie_id",
+            pipeline: [
+              {
+                $sort: {
+                  "date": -1
+                }
+              }
+            ],
+            as: "comments"            
+          }
+        }       
       ]
       return await movies.aggregate(pipeline).next()
     } catch (e) {
